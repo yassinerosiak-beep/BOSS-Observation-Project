@@ -1,0 +1,6 @@
+{
+  "name": "BOSS Observer",
+  "description": "Step-by-step BOSS classroom interval observation tool for school psychologists with 6x3 summary tables, report template population, and local session review.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
