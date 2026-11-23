@@ -1,4 +1,5 @@
 import type {
+  AppOptions,
   BossResult,
   InputMode,
   LiveTallies,
@@ -11,9 +12,21 @@ import type {
   ReportParagraph,
   ReportToken,
   SavedObservation,
+  StudentProfile,
 } from '../types/boss';
 
 const STORAGE_KEY = 'boss_observer_saved_v1';
+const STUDENTS_KEY = 'boss_observer_students_v1';
+const OPTIONS_KEY = 'boss_observer_options_v1';
+
+export const DEFAULT_OPTIONS: AppOptions = {
+  defaultIntervalSeconds: 15,
+  defaultTotalIntervals: 60,
+  peerCadence: 5,
+  defaultInputMode: 'manual',
+  defaultSoundOn: true,
+  keepScreenAwake: true,
+};
 
 export function getTodayDateString(): string {
   const now = new Date();
@@ -42,8 +55,9 @@ export function formatDurationEstimate(secondsPerInterval: number, totalInterval
   return `${timeText} · ${tot} intervals × ${sec}s`;
 }
 
-export function isPeerInterval(intervalIndex: number): boolean {
-  return intervalIndex % 5 === 0;
+export function isPeerInterval(intervalIndex: number, peerCadence = 5): boolean {
+  const cadence = Math.max(2, Math.round(peerCadence || 5));
+  return intervalIndex % cadence === 0;
 }
 
 export function clampPct(value: number): number {
@@ -442,6 +456,44 @@ export function loadSavedObservations(): SavedObservation[] {
 export function saveObservationsToStorage(list: SavedObservation[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  } catch {
+    // Ignore storage quota issues safely
+  }
+}
+
+export function loadStudents(): StudentProfile[] {
+  try {
+    const raw = localStorage.getItem(STUDENTS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveStudentsToStorage(list: StudentProfile[]): void {
+  try {
+    localStorage.setItem(STUDENTS_KEY, JSON.stringify(list));
+  } catch {
+    // Ignore storage quota issues safely
+  }
+}
+
+export function loadOptions(): AppOptions {
+  try {
+    const raw = localStorage.getItem(OPTIONS_KEY);
+    if (!raw) return DEFAULT_OPTIONS;
+    const parsed = JSON.parse(raw);
+    return { ...DEFAULT_OPTIONS, ...parsed };
+  } catch {
+    return DEFAULT_OPTIONS;
+  }
+}
+
+export function saveOptionsToStorage(options: AppOptions): void {
+  try {
+    localStorage.setItem(OPTIONS_KEY, JSON.stringify(options));
   } catch {
     // Ignore storage quota issues safely
   }

@@ -1,30 +1,81 @@
-import { ArrowRight, Clock, ClipboardList, Timer } from 'lucide-react';
-import type { InputMode, ObservationSetup, PronounCode } from '../types/boss';
+import { ArrowLeft, ArrowRight, Clock, ClipboardList, Timer } from 'lucide-react';
+import type { InputMode, ObservationSetup, PronounCode, StudentProfile } from '../types/boss';
 import { formatDurationEstimate } from '../utils/bossEngine';
 
 interface StepSetupProps {
   setup: ObservationSetup;
+  students: StudentProfile[];
   onChange: (next: ObservationSetup) => void;
   onContinue: () => void;
+  onBackToMenu: () => void;
 }
 
-export function StepSetup({ setup, onChange, onContinue }: StepSetupProps) {
+export function StepSetup({
+  setup,
+  students,
+  onChange,
+  onContinue,
+  onBackToMenu,
+}: StepSetupProps) {
   const estimateText = formatDurationEstimate(setup.intervalSeconds, setup.totalIntervals);
 
   const updateField = <K extends keyof ObservationSetup>(key: K, value: ObservationSetup[K]) => {
     onChange({ ...setup, [key]: value });
   };
 
+  const handleSelectStudent = (studentId: string) => {
+    const found = students.find((s) => s.id === studentId);
+    if (!found) return;
+    onChange({
+      ...setup,
+      studentName: found.name,
+      pronouns: found.pronouns,
+      setting: found.defaultSetting || setup.setting,
+    });
+  };
+
   return (
     <section className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs">
-      <div className="mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
-          01. Observation Setup
-        </h2>
-        <p className="mt-1.5 text-sm sm:text-base text-slate-600">
-          Configure student details, interval timing, and data collection method for this independent observation.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-6">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+            01. Observation Setup
+          </h2>
+          <p className="mt-1.5 text-sm sm:text-base text-slate-600">
+            Configure student details, interval timing, and data collection method for this independent observation.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={onBackToMenu}
+          className="min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5 self-start cursor-pointer whitespace-nowrap shrink-0"
+        >
+          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+          <span>Main Menu</span>
+        </button>
       </div>
+
+      {students.length > 0 && (
+        <div className="mb-5 p-4 rounded-xl bg-slate-50 border border-slate-200/90">
+          <label htmlFor="quickStudentPick" className="block text-xs font-semibold text-slate-600 mb-1.5">
+            Load Saved Student Profile (Optional)
+          </label>
+          <select
+            id="quickStudentPick"
+            defaultValue=""
+            onChange={(e) => handleSelectStudent(e.target.value)}
+            className="w-full sm:max-w-sm min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <option value="">Choose a saved student...</option>
+            {students.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name} ({s.defaultSetting})
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>

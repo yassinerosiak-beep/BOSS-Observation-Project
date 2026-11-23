@@ -22,6 +22,7 @@ import { isPeerInterval } from '../utils/bossEngine';
 
 interface StepObserveProps {
   setup: ObservationSetup;
+  peerCadence: number;
   inputMode: InputMode;
   manualType: ManualInputType;
   manualPct: ManualPercentages;
@@ -48,6 +49,7 @@ interface StepObserveProps {
 
 export function StepObserve({
   setup,
+  peerCadence,
   inputMode,
   manualType,
   manualPct,
@@ -72,7 +74,7 @@ export function StepObserve({
   onGenerate,
 }: StepObserveProps) {
   const displayStudent = setup.studentName.trim() || 'Target Student';
-  const peer = isPeerInterval(liveCurr);
+  const peer = isPeerInterval(liveCurr, peerCadence);
   const anyOffMarked = marks.M || marks.V || marks.P;
   const onTaskLocked = anyOffMarked;
   const offTaskLocked = marks.ON;

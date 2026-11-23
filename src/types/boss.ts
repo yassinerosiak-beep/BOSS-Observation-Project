@@ -1,3 +1,5 @@
+export type AppView = 'menu' | 'wizard' | 'students' | 'options';
+
 export type StepNumber = 1 | 2 | 3 | 4;
 
 export type InputMode = 'manual' | 'live';
@@ -7,6 +9,23 @@ export type ManualInputType = 'pct' | 'cnt';
 export type PronounCode = 'she' | 'he' | 'they';
 
 export type SortOrder = 'date-desc' | 'date-asc' | 'name-asc' | 'ontask-asc';
+
+export interface StudentProfile {
+  id: string;
+  name: string;
+  pronouns: PronounCode;
+  defaultSetting: string;
+  createdAt: string;
+}
+
+export interface AppOptions {
+  defaultIntervalSeconds: number;
+  defaultTotalIntervals: number;
+  peerCadence: number;
+  defaultInputMode: InputMode;
+  defaultSoundOn: boolean;
+  keepScreenAwake: boolean;
+}
 
 export interface ObservationSetup {
   studentName: string;
