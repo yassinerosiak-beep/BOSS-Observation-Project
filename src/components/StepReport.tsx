@@ -82,14 +82,14 @@ export function StepReport({
   };
 
   return (
-    <section className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs">
+    <section className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xs">
       {/* Header + 6x3 Data Table */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
             03. 6×3 Data Table &amp; Report
           </h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <p className="text-sm text-slate-500 dark:text-zinc-400 mt-0.5">
             {result.studentName} · {result.setting} · {result.date}
           </p>
         </div>
@@ -97,11 +97,11 @@ export function StepReport({
         <button
           type="button"
           onClick={handleCopyTable}
-          className="min-h-[42px] px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-sm font-semibold inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          className="min-h-[42px] px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-900 dark:text-zinc-100 border border-transparent dark:border-zinc-800 text-sm font-semibold inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
           {copiedTable ? (
             <>
-              <Check className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
+              <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
               <span>Copied Table</span>
             </>
           ) : (
@@ -113,20 +113,24 @@ export function StepReport({
         </button>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200">
+      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-zinc-800">
         <table className="w-full border-collapse text-sm sm:text-base">
           <thead>
-            <tr className="bg-slate-100 text-slate-900 border-b border-slate-200">
+            <tr className="bg-slate-100 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 border-b border-slate-200 dark:border-zinc-800">
               <th className="py-3 px-4 text-left font-bold">BOSS Behavior Category</th>
               <th className="py-3 px-4 text-center font-bold w-[24%]">{result.studentName}</th>
               <th className="py-3 px-4 text-center font-bold w-[24%]">Classroom Peer</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-slate-200 dark:divide-zinc-800">
             {tableRows.map((row) => (
               <tr
                 key={row.label}
-                className={row.summary ? 'bg-slate-50/70 font-semibold text-slate-900' : 'bg-white text-slate-800'}
+                className={
+                  row.summary
+                    ? 'bg-slate-50/70 dark:bg-zinc-900/60 font-semibold text-slate-900 dark:text-zinc-100'
+                    : 'bg-white dark:bg-zinc-950 text-slate-800 dark:text-zinc-200'
+                }
               >
                 <td className="py-3 px-4">{row.label}</td>
                 <td className="py-3 px-4 text-center font-mono tabular-nums font-semibold">
@@ -142,26 +146,26 @@ export function StepReport({
       </div>
 
       {result.classNarrative && (
-        <div className="mt-4 p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/80 text-sm text-slate-800">
-          <span className="font-semibold text-blue-950">Classroom Activity Note: </span>
+        <div className="mt-4 p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900 text-sm text-slate-800 dark:text-zinc-200">
+          <span className="font-semibold text-blue-950 dark:text-blue-200">Classroom Activity Note: </span>
           <span>{result.classNarrative}</span>
         </div>
       )}
 
       {/* Report Template Section */}
-      <div className="mt-8 pt-7 border-t border-slate-200">
+      <div className="mt-8 pt-7 border-t border-slate-200 dark:border-zinc-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
-          <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+          <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-zinc-100">
             Observation Report Narrative
           </h3>
           <button
             type="button"
             onClick={handleCopyReport}
-            className="min-h-[42px] px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-sm font-semibold inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+            className="min-h-[42px] px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-900 dark:text-zinc-100 border border-transparent dark:border-zinc-800 text-sm font-semibold inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
           >
             {copiedReport ? (
               <>
-                <Check className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
+                <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
                 <span>Copied Report</span>
               </>
             ) : (
@@ -173,13 +177,16 @@ export function StepReport({
           </button>
         </div>
 
-        <p className="text-sm text-slate-600 mb-5">
+        <p className="text-sm text-slate-600 dark:text-zinc-400 mb-5">
           Highlighted bracketed areas stay ready for you to complete later in your report, or optionally fill specific behaviors below before copying.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
           <div>
-            <label htmlFor="fill-format" className="block text-xs font-semibold text-slate-600 mb-1">
+            <label
+              htmlFor="fill-format"
+              className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1"
+            >
               Instructional Format (Optional)
             </label>
             <input
@@ -188,12 +195,15 @@ export function StepReport({
               value={fills.format}
               onChange={(e) => onFillsChange({ ...fills, format: e.target.value })}
               placeholder="e.g., independent work"
-              className="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 bg-slate-50/70 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
+              className="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50/70 dark:bg-zinc-900 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950"
             />
           </div>
 
           <div>
-            <label htmlFor="fill-motor" className="block text-xs font-semibold text-slate-600 mb-1">
+            <label
+              htmlFor="fill-motor"
+              className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1"
+            >
               Specific Motor Behaviors (Optional)
             </label>
             <input
@@ -202,12 +212,15 @@ export function StepReport({
               value={fills.motor}
               onChange={(e) => onFillsChange({ ...fills, motor: e.target.value })}
               placeholder="e.g., tapping on desk, playing with wrappers"
-              className="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 bg-slate-50/70 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
+              className="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50/70 dark:bg-zinc-900 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950"
             />
           </div>
 
           <div>
-            <label htmlFor="fill-verbal" className="block text-xs font-semibold text-slate-600 mb-1">
+            <label
+              htmlFor="fill-verbal"
+              className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1"
+            >
               Specific Verbal Behaviors (Optional)
             </label>
             <input
@@ -216,28 +229,28 @@ export function StepReport({
               value={fills.verbal}
               onChange={(e) => onFillsChange({ ...fills, verbal: e.target.value })}
               placeholder="e.g., talking with classmates seated nearby"
-              className="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 bg-slate-50/70 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
+              className="w-full min-h-[44px] px-3 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50/70 dark:bg-zinc-900 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950"
             />
           </div>
         </div>
 
         {/* Populated Template Output */}
-        <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-5 sm:p-6 space-y-4 text-sm sm:text-base leading-relaxed text-slate-800">
+        <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-900/60 p-5 sm:p-6 space-y-4 text-sm sm:text-base leading-relaxed text-slate-800 dark:text-zinc-200">
           {paragraphs.map((p) => (
             <div key={p.id}>
               {p.heading && (
-                <div className="font-bold text-slate-900 mb-1">{p.heading}</div>
+                <div className="font-bold text-slate-900 dark:text-zinc-100 mb-1">{p.heading}</div>
               )}
               <p className="m-0">
                 {p.inlineLabel && (
-                  <strong className="text-slate-900 mr-1.5">{p.inlineLabel}</strong>
+                  <strong className="text-slate-900 dark:text-zinc-100 mr-1.5">{p.inlineLabel}</strong>
                 )}
                 {p.tokens.map((tok, idx) => {
                   if (tok.kind === 'blank') {
                     return (
                       <span
                         key={idx}
-                        className="inline-block bg-amber-100 border border-dashed border-amber-500 text-amber-900 font-semibold px-1.5 py-0.5 rounded-md mx-0.5 text-[0.92em]"
+                        className="inline-block bg-amber-100 dark:bg-amber-950/80 border border-dashed border-amber-500 dark:border-amber-600 text-amber-900 dark:text-amber-200 font-semibold px-1.5 py-0.5 rounded-md mx-0.5 text-[0.92em]"
                       >
                         {tok.text}
                       </span>
@@ -247,7 +260,7 @@ export function StepReport({
                     return (
                       <span
                         key={idx}
-                        className="inline-block bg-sky-100 border border-sky-300 text-sky-900 font-semibold px-1.5 py-0.5 rounded-md mx-0.5 text-[0.95em]"
+                        className="inline-block bg-sky-100 dark:bg-sky-950/80 border border-sky-300 dark:border-sky-700 text-sky-900 dark:text-sky-200 font-semibold px-1.5 py-0.5 rounded-md mx-0.5 text-[0.95em]"
                       >
                         {tok.text}
                       </span>
@@ -266,7 +279,7 @@ export function StepReport({
         <button
           type="button"
           onClick={onBack}
-          className="min-h-[46px] px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+          className="min-h-[46px] px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-100 font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
         >
           <ArrowLeft className="w-4 h-4 shrink-0" aria-hidden="true" />
           <span>Edit Data</span>

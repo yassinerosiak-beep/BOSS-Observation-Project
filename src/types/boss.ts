@@ -26,6 +26,7 @@ export interface AppOptions {
   defaultSoundOn: boolean;
   defaultVisualFlash: boolean;
   keepScreenAwake: boolean;
+  nightMode: boolean;
 }
 
 export interface IntervalHistoryEntry {

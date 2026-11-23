@@ -27,6 +27,7 @@ export const DEFAULT_OPTIONS: AppOptions = {
   defaultSoundOn: true,
   defaultVisualFlash: true,
   keepScreenAwake: true,
+  nightMode: false,
 };
 
 export function getTodayDateString(): string {

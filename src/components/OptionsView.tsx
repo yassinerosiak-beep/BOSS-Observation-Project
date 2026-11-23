@@ -41,21 +41,21 @@ export function OptionsView({
   return (
     <div className="space-y-6">
       {/* Options Panel */}
-      <section className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs">
+      <section className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
                 Options &amp; Data Management
               </h1>
               {savedNotice && (
-                <span className="text-xs font-semibold text-emerald-700 inline-flex items-center gap-1">
+                <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 inline-flex items-center gap-1">
                   <Check className="w-3.5 h-3.5" aria-hidden="true" />
                   Saved
                 </span>
               )}
             </div>
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="mt-1 text-sm text-slate-600 dark:text-zinc-400">
               Configure default observation settings for new sessions and manage or delete stored local data.
             </p>
           </div>
@@ -63,7 +63,7 @@ export function OptionsView({
           <button
             type="button"
             onClick={onBackToMenu}
-            className="min-h-[42px] px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold inline-flex items-center gap-2 self-start cursor-pointer whitespace-nowrap shrink-0"
+            className="min-h-[42px] px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-100 text-sm font-semibold inline-flex items-center gap-2 self-start cursor-pointer whitespace-nowrap shrink-0"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             <span>Back to Main Menu</span>
@@ -72,7 +72,10 @@ export function OptionsView({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label htmlFor="opt-interval-sec" className="block text-xs font-semibold text-slate-600 mb-1.5">
+            <label
+              htmlFor="opt-interval-sec"
+              className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1.5"
+            >
               Default Interval Length (Seconds)
             </label>
             <input
@@ -84,12 +87,15 @@ export function OptionsView({
               onChange={(e) =>
                 update('defaultIntervalSeconds', Math.max(5, Number(e.target.value) || 15))
               }
-              className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 bg-slate-50 font-mono tabular-nums text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
+              className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-900 font-mono tabular-nums text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950"
             />
           </div>
 
           <div>
-            <label htmlFor="opt-total-int" className="block text-xs font-semibold text-slate-600 mb-1.5">
+            <label
+              htmlFor="opt-total-int"
+              className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1.5"
+            >
               Default Total Intervals
             </label>
             <input
@@ -101,19 +107,22 @@ export function OptionsView({
               onChange={(e) =>
                 update('defaultTotalIntervals', Math.max(5, Number(e.target.value) || 60))
               }
-              className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 bg-slate-50 font-mono tabular-nums text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
+              className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-900 font-mono tabular-nums text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950"
             />
           </div>
 
           <div>
-            <label htmlFor="opt-peer-cadence" className="block text-xs font-semibold text-slate-600 mb-1.5">
+            <label
+              htmlFor="opt-peer-cadence"
+              className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1.5"
+            >
               Peer Comparison Interval Cadence
             </label>
             <select
               id="opt-peer-cadence"
               value={options.peerCadence}
               onChange={(e) => update('peerCadence', Number(e.target.value) || 5)}
-              className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
+              className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950"
             >
               <option value={4}>Every 4th interval (25% peer)</option>
               <option value={5}>Every 5th interval (Standard BOSS · 20% peer)</option>
@@ -123,14 +132,17 @@ export function OptionsView({
           </div>
 
           <div>
-            <label htmlFor="opt-default-mode" className="block text-xs font-semibold text-slate-600 mb-1.5">
+            <label
+              htmlFor="opt-default-mode"
+              className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1.5"
+            >
               Default Data Collection Mode
             </label>
             <select
               id="opt-default-mode"
               value={options.defaultInputMode}
               onChange={(e) => update('defaultInputMode', e.target.value as InputMode)}
-              className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
+              className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950"
             >
               <option value="manual">Enter Counts / % (Post-Hoc)</option>
               <option value="live">Live Classroom Timer</option>
@@ -138,13 +150,28 @@ export function OptionsView({
           </div>
         </div>
 
-        <div className="mt-4 text-xs text-slate-600 font-medium tabular-nums">
+        <div className="mt-4 text-xs text-slate-600 dark:text-zinc-400 font-medium tabular-nums">
           Default Session Preview:{' '}
           {formatDurationEstimate(options.defaultIntervalSeconds, options.defaultTotalIntervals)}
         </div>
 
-        <div className="mt-6 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer">
+        <div className="mt-6 pt-6 border-t border-slate-100 dark:border-zinc-800 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/60 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={options.nightMode}
+              onChange={(e) => update('nightMode', e.target.checked)}
+              className="mt-1 w-4 h-4 accent-blue-600"
+            />
+            <div>
+              <div className="text-sm font-semibold text-slate-900 dark:text-zinc-100">Night Mode</div>
+              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                Dark, mostly-black workspace for dim classrooms.
+              </div>
+            </div>
+          </label>
+
+          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/60 cursor-pointer">
             <input
               type="checkbox"
               checked={options.defaultSoundOn}
@@ -152,14 +179,16 @@ export function OptionsView({
               className="mt-1 w-4 h-4 accent-blue-600"
             />
             <div>
-              <div className="text-sm font-semibold text-slate-900">Audio Chimes Enabled</div>
-              <div className="text-xs text-slate-500 mt-0.5">
-                Plays soft tones for Target vs. Peer intervals (earbuds recommended).
+              <div className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+                Audio Chimes Enabled
+              </div>
+              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                Plays soft tones for Target vs. Peer intervals.
               </div>
             </div>
           </label>
 
-          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer">
+          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/60 cursor-pointer">
             <input
               type="checkbox"
               checked={options.defaultVisualFlash}
@@ -167,14 +196,16 @@ export function OptionsView({
               className="mt-1 w-4 h-4 accent-blue-600"
             />
             <div>
-              <div className="text-sm font-semibold text-slate-900">Visual Interval Flash</div>
-              <div className="text-xs text-slate-500 mt-0.5">
-                Briefly flashes the live screen at every interval switch for silent cues.
+              <div className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+                Visual Interval Flash
+              </div>
+              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                Briefly flashes the live screen at every interval switch.
               </div>
             </div>
           </label>
 
-          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer">
+          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/60 cursor-pointer">
             <input
               type="checkbox"
               checked={options.keepScreenAwake}
@@ -182,9 +213,11 @@ export function OptionsView({
               className="mt-1 w-4 h-4 accent-blue-600"
             />
             <div>
-              <div className="text-sm font-semibold text-slate-900">Keep Screen Awake</div>
-              <div className="text-xs text-slate-500 mt-0.5">
-                Requests browser Screen Wake Lock while the live timer runs on iPhone/iPad.
+              <div className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+                Keep Screen Awake
+              </div>
+              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                Requests Screen Wake Lock while the live timer runs.
               </div>
             </div>
           </label>
@@ -194,7 +227,7 @@ export function OptionsView({
           <button
             type="button"
             onClick={() => onSaveOptions(DEFAULT_OPTIONS)}
-            className="min-h-[40px] px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+            className="min-h-[40px] px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-200 text-xs font-semibold cursor-pointer"
           >
             Restore Default Settings
           </button>
@@ -204,37 +237,43 @@ export function OptionsView({
       {/* Delete Old Data Section */}
       <section
         id="delete-old-data"
-        className={`bg-white rounded-2xl p-6 sm:p-8 shadow-xs border ${
-          highlightDeleteSection ? 'border-red-300 ring-2 ring-red-100' : 'border-slate-200'
+        className={`bg-white dark:bg-zinc-950 rounded-2xl p-6 sm:p-8 shadow-xs border ${
+          highlightDeleteSection
+            ? 'border-red-300 dark:border-red-800 ring-2 ring-red-100 dark:ring-red-950/60'
+            : 'border-slate-200 dark:border-zinc-800'
         }`}
       >
         <div className="flex items-center gap-2 mb-1">
-          <Trash2 className="w-5 h-5 text-red-600" aria-hidden="true" />
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900">Delete Old Data</h2>
+          <Trash2 className="w-5 h-5 text-red-600 dark:text-red-400" aria-hidden="true" />
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-zinc-100">Delete Old Data</h2>
         </div>
-        <p className="text-sm text-slate-600 mb-5">
+        <p className="text-sm text-slate-600 dark:text-zinc-400 mb-5">
           Remove individual saved observations or wipe stored student profiles and session data from this device.
         </p>
 
-        {/* Individual Saved Observations Delete List */}
         {savedObservations.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-xs font-semibold text-slate-600 mb-2">
+            <h3 className="text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-2">
               Individual Saved Observations ({savedObservations.length}/3)
             </h3>
-            <div className="divide-y divide-slate-200 border border-slate-200 rounded-xl overflow-hidden">
+            <div className="divide-y divide-slate-200 dark:divide-zinc-800 border border-slate-200 dark:border-zinc-800 rounded-xl overflow-hidden">
               {savedObservations.map((obs) => (
-                <div key={obs.id} className="p-3.5 bg-white flex items-center justify-between gap-3">
+                <div
+                  key={obs.id}
+                  className="p-3.5 bg-white dark:bg-zinc-950 flex items-center justify-between gap-3"
+                >
                   <div className="min-w-0">
-                    <div className="text-sm font-bold text-slate-900 truncate">{obs.studentName}</div>
-                    <div className="text-xs text-slate-500 tabular-nums">
+                    <div className="text-sm font-bold text-slate-900 dark:text-zinc-100 truncate">
+                      {obs.studentName}
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-zinc-400 tabular-nums">
                       {obs.date} · {obs.setting} · On-Task {obs.tOn}% vs Peer {obs.pOn}%
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => onDeleteObservation(obs.id)}
-                    className="min-h-[38px] px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold cursor-pointer whitespace-nowrap shrink-0"
+                    className="min-h-[38px] px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 dark:bg-red-950/60 dark:hover:bg-red-900/70 text-red-700 dark:text-red-400 text-xs font-semibold cursor-pointer whitespace-nowrap shrink-0"
                   >
                     Delete
                   </button>
@@ -244,12 +283,14 @@ export function OptionsView({
           </div>
         )}
 
-        {/* Bulk Cleanup Controls with Safe Two-Step Confirmation */}
+        {/* Bulk Cleanup Controls */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-3">
+          <div className="p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-900/60 flex flex-col justify-between gap-3">
             <div>
-              <div className="text-sm font-bold text-slate-900">Clear Saved Observations</div>
-              <div className="text-xs text-slate-500 mt-0.5 tabular-nums">
+              <div className="text-sm font-bold text-slate-900 dark:text-zinc-100">
+                Clear Saved Observations
+              </div>
+              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5 tabular-nums">
                 {savedObservations.length} saved session{savedObservations.length === 1 ? '' : 's'}
               </div>
             </div>
@@ -268,7 +309,7 @@ export function OptionsView({
                 <button
                   type="button"
                   onClick={() => setConfirmAction(null)}
-                  className="min-h-[40px] px-3 py-2 rounded-lg bg-slate-200 text-slate-800 text-xs font-semibold cursor-pointer"
+                  className="min-h-[40px] px-3 py-2 rounded-lg bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -278,17 +319,17 @@ export function OptionsView({
                 type="button"
                 disabled={savedObservations.length === 0}
                 onClick={() => setConfirmAction('obs')}
-                className="min-h-[40px] px-3 py-2 rounded-lg bg-white border border-red-200 hover:bg-red-50 disabled:opacity-45 text-red-700 text-xs font-semibold cursor-pointer"
+                className="min-h-[40px] px-3 py-2 rounded-lg bg-white dark:bg-zinc-950 border border-red-200 dark:border-red-900 hover:bg-red-50 dark:hover:bg-red-950/60 disabled:opacity-45 text-red-700 dark:text-red-400 text-xs font-semibold cursor-pointer"
               >
                 Delete All Observations
               </button>
             )}
           </div>
 
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-3">
+          <div className="p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-900/60 flex flex-col justify-between gap-3">
             <div>
-              <div className="text-sm font-bold text-slate-900">Clear Student Roster</div>
-              <div className="text-xs text-slate-500 mt-0.5 tabular-nums">
+              <div className="text-sm font-bold text-slate-900 dark:text-zinc-100">Clear Student Roster</div>
+              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5 tabular-nums">
                 {studentCount} saved student{studentCount === 1 ? '' : 's'}
               </div>
             </div>
@@ -307,7 +348,7 @@ export function OptionsView({
                 <button
                   type="button"
                   onClick={() => setConfirmAction(null)}
-                  className="min-h-[40px] px-3 py-2 rounded-lg bg-slate-200 text-slate-800 text-xs font-semibold cursor-pointer"
+                  className="min-h-[40px] px-3 py-2 rounded-lg bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -317,17 +358,17 @@ export function OptionsView({
                 type="button"
                 disabled={studentCount === 0}
                 onClick={() => setConfirmAction('students')}
-                className="min-h-[40px] px-3 py-2 rounded-lg bg-white border border-red-200 hover:bg-red-50 disabled:opacity-45 text-red-700 text-xs font-semibold cursor-pointer"
+                className="min-h-[40px] px-3 py-2 rounded-lg bg-white dark:bg-zinc-950 border border-red-200 dark:border-red-900 hover:bg-red-50 dark:hover:bg-red-950/60 disabled:opacity-45 text-red-700 dark:text-red-400 text-xs font-semibold cursor-pointer"
               >
                 Delete All Students
               </button>
             )}
           </div>
 
-          <div className="p-4 rounded-xl border border-red-200 bg-red-50/40 flex flex-col justify-between gap-3">
+          <div className="p-4 rounded-xl border border-red-200 dark:border-red-900/80 bg-red-50/40 dark:bg-red-950/30 flex flex-col justify-between gap-3">
             <div>
-              <div className="text-sm font-bold text-red-950">Reset All Local Data</div>
-              <div className="text-xs text-red-800/80 mt-0.5">
+              <div className="text-sm font-bold text-red-950 dark:text-red-200">Reset All Local Data</div>
+              <div className="text-xs text-red-800/80 dark:text-red-300/80 mt-0.5">
                 Deletes observations, students, and restores default options.
               </div>
             </div>
@@ -346,7 +387,7 @@ export function OptionsView({
                 <button
                   type="button"
                   onClick={() => setConfirmAction(null)}
-                  className="min-h-[40px] px-3 py-2 rounded-lg bg-slate-200 text-slate-800 text-xs font-semibold cursor-pointer"
+                  className="min-h-[40px] px-3 py-2 rounded-lg bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -365,21 +406,27 @@ export function OptionsView({
       </section>
 
       {/* BOSS Quick Reference Card */}
-      <section className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs">
+      <section className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xs">
         <div className="flex items-center gap-2 mb-3">
-          <BookOpen className="w-5 h-5 text-blue-600" aria-hidden="true" />
-          <h2 className="text-base sm:text-lg font-bold text-slate-900">BOSS Coding Quick Reference</h2>
+          <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-zinc-100">
+            BOSS Coding Quick Reference
+          </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-            <div className="font-bold text-slate-900 mb-1">On-Task (Momentary Time Sampling)</div>
-            <p className="text-xs leading-relaxed text-slate-600">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700 dark:text-zinc-300">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-zinc-900/70 border border-slate-200/80 dark:border-zinc-800">
+            <div className="font-bold text-slate-900 dark:text-zinc-100 mb-1">
+              On-Task (Momentary Time Sampling)
+            </div>
+            <p className="text-xs leading-relaxed text-slate-600 dark:text-zinc-400">
               Code at the exact onset cue of the interval if the student is attending to assigned instructional materials or listening/participating appropriately. Mutually exclusive with Off-Task codes in this workflow.
             </p>
           </div>
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-            <div className="font-bold text-slate-900 mb-1">Off-Task Categories (Partial-Interval)</div>
-            <p className="text-xs leading-relaxed text-slate-600">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-zinc-900/70 border border-slate-200/80 dark:border-zinc-800">
+            <div className="font-bold text-slate-900 dark:text-zinc-100 mb-1">
+              Off-Task Categories (Partial-Interval)
+            </div>
+            <p className="text-xs leading-relaxed text-slate-600 dark:text-zinc-400">
               Code <strong>OFT-M</strong> (Motor movement not required by task), <strong>OFT-V</strong> (Verbalizations unrelated to task), or <strong>OFT-P</strong> (Passive looking away/daydreaming) whenever observed during the interval. Multiple off-task types may co-occur.
             </p>
           </div>

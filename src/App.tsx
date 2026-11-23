@@ -156,6 +156,11 @@ export default function App() {
     }, 3200);
   }, []);
 
+  // Sync Tailwind .dark class on document root when Night Mode toggles
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', options.nightMode);
+  }, [options.nightMode]);
+
   // Keep Screen Awake during live timer if enabled in Options
   useEffect(() => {
     const active = view === 'wizard' && step === 2 && setup.inputMode === 'live' && liveRunning && options.keepScreenAwake;
@@ -479,6 +484,10 @@ export default function App() {
     setVisualFlashEnabled(next.defaultVisualFlash);
   };
 
+  const handleToggleNightMode = () => {
+    handleSaveOptions({ ...options, nightMode: !options.nightMode });
+  };
+
   const handleClearObservations = () => {
     setSavedList([]);
     saveObservationsToStorage([]);
@@ -506,9 +515,9 @@ export default function App() {
   const isPeer = isPeerInterval(liveCurr, options.peerCadence);
   const shellBgClass = isLiveScreen
     ? isPeer
-      ? 'bg-fuchsia-200'
-      : 'bg-emerald-200'
-    : 'bg-slate-100';
+      ? 'bg-fuchsia-200 dark:bg-fuchsia-950'
+      : 'bg-emerald-200 dark:bg-emerald-950'
+    : 'bg-slate-100 dark:bg-black';
 
   const stepItems: { step: StepNumber; label: string }[] = [
     { step: 1, label: '1. Setup' },
@@ -536,12 +545,12 @@ export default function App() {
   return (
     <div className={`min-h-screen ${shellBgClass} transition-colors duration-200 flex flex-col`}>
       {/* Single-Row Three-Zone Top Bar */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30">
+      <header className="bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4 sm:gap-8">
           <button
             type="button"
             onClick={() => navigateToView('menu')}
-            className="text-lg font-extrabold tracking-tight text-slate-900 whitespace-nowrap shrink-0 cursor-pointer"
+            className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-zinc-100 whitespace-nowrap shrink-0 cursor-pointer"
           >
             BOSS Observer
           </button>
@@ -554,8 +563,8 @@ export default function App() {
                 onClick={link.onClick}
                 className={`text-sm font-semibold whitespace-nowrap shrink-0 py-1 border-b-2 transition-colors cursor-pointer ${
                   link.active
-                    ? 'border-blue-600 text-blue-700'
-                    : 'border-transparent text-slate-600 hover:text-slate-900'
+                    ? 'border-blue-600 text-blue-700 dark:border-blue-500 dark:text-blue-400'
+                    : 'border-transparent text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
                 }`}
               >
                 {link.label}
@@ -573,14 +582,16 @@ export default function App() {
         </div>
 
         {/* Mobile Compact Menu Bar */}
-        <div className="md:hidden border-t border-slate-200/80 px-2 py-1.5 grid grid-cols-5 gap-1 bg-white/95">
+        <div className="md:hidden border-t border-slate-200/80 dark:border-zinc-800 px-2 py-1.5 grid grid-cols-5 gap-1 bg-white/95 dark:bg-zinc-950/95">
           {topNavLinks.map((link) => (
             <button
               key={link.label}
               type="button"
               onClick={link.onClick}
               className={`min-h-[36px] px-1 py-1 rounded-lg text-[11px] font-semibold text-center whitespace-nowrap truncate transition-colors cursor-pointer ${
-                link.active ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'
+                link.active
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 dark:bg-zinc-900 text-slate-700 dark:text-zinc-300'
               }`}
             >
               {link.label.replace(' Observation', '').replace(' (0/3)', '').replace(' (1/3)', '').replace(' (2/3)', '').replace(' (3/3)', '')}
@@ -596,6 +607,7 @@ export default function App() {
             students={students}
             savedObservations={savedList}
             options={options}
+            onToggleNightMode={handleToggleNightMode}
             onStartNewObservation={handleStartNewObservation}
             onOpenStudents={() => navigateToView('students')}
             onOpenReview={() => navigateToStep(4)}
@@ -636,7 +648,7 @@ export default function App() {
           <>
             {/* Always-Visible 4-Step Wizard Bar */}
             <div
-              className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5 p-1.5 bg-white/90 border border-slate-200 rounded-2xl shadow-xs"
+              className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5 p-1.5 bg-white/90 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xs"
               role="tablist"
               aria-label="Observation Workflow Steps"
             >
@@ -654,8 +666,8 @@ export default function App() {
                       active
                         ? 'bg-blue-600 text-white shadow-xs'
                         : completed
-                          ? 'bg-blue-50 text-blue-800 hover:bg-blue-100'
-                          : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                          ? 'bg-blue-50 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60'
+                          : 'bg-slate-50 dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800'
                     }`}
                   >
                     {item.label}
@@ -746,7 +758,7 @@ export default function App() {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-sm font-medium px-4 py-2.5 rounded-xl shadow-lg max-w-[90vw] text-center"
+          className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 dark:bg-zinc-800 dark:border dark:border-zinc-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl shadow-lg max-w-[90vw] text-center"
         >
           {toast}
         </div>

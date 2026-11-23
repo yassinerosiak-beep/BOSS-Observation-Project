@@ -35,13 +35,13 @@ export function StepSetup({
   };
 
   return (
-    <section className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs">
+    <section className="bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xs">
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-6">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-zinc-100">
             01. Observation Setup
           </h2>
-          <p className="mt-1.5 text-sm sm:text-base text-slate-600">
+          <p className="mt-1.5 text-sm sm:text-base text-slate-600 dark:text-zinc-400">
             Configure student details, interval timing, and data collection method for this independent observation.
           </p>
         </div>
@@ -49,7 +49,7 @@ export function StepSetup({
         <button
           type="button"
           onClick={onBackToMenu}
-          className="min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5 self-start cursor-pointer whitespace-nowrap shrink-0"
+          className="min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-100 text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5 self-start cursor-pointer whitespace-nowrap shrink-0"
         >
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           <span>Main Menu</span>
@@ -57,15 +57,18 @@ export function StepSetup({
       </div>
 
       {students.length > 0 && (
-        <div className="mb-5 p-4 rounded-xl bg-slate-50 border border-slate-200/90">
-          <label htmlFor="quickStudentPick" className="block text-xs font-semibold text-slate-600 mb-1.5">
+        <div className="mb-5 p-4 rounded-xl bg-slate-50 dark:bg-zinc-900/70 border border-slate-200/90 dark:border-zinc-800">
+          <label
+            htmlFor="quickStudentPick"
+            className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1.5"
+          >
             Load Saved Student Profile (Optional)
           </label>
           <select
             id="quickStudentPick"
             defaultValue=""
             onChange={(e) => handleSelectStudent(e.target.value)}
-            className="w-full sm:max-w-sm min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full sm:max-w-sm min-h-[42px] px-3.5 py-2 rounded-xl border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 text-sm text-slate-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-600"
           >
             <option value="">Choose a saved student...</option>
             {students.map((s) => (
@@ -79,7 +82,10 @@ export function StepSetup({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
-          <label htmlFor="studentName" className="block text-xs font-semibold text-slate-600 mb-1.5">
+          <label
+            htmlFor="studentName"
+            className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1.5"
+          >
             Student First Name (Column 2 Header)
           </label>
           <input
@@ -88,19 +94,22 @@ export function StepSetup({
             value={setup.studentName}
             onChange={(e) => updateField('studentName', e.target.value)}
             placeholder="e.g., Miracle"
-            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/70 text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-colors"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50/70 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950 transition-colors"
           />
         </div>
 
         <div>
-          <label htmlFor="studentPronouns" className="block text-xs font-semibold text-slate-600 mb-1.5">
+          <label
+            htmlFor="studentPronouns"
+            className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1.5"
+          >
             Student Pronouns
           </label>
           <select
             id="studentPronouns"
             value={setup.pronouns}
             onChange={(e) => updateField('pronouns', e.target.value as PronounCode)}
-            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/70 text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-colors"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50/70 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950 transition-colors"
           >
             <option value="she">She / Her</option>
             <option value="he">He / Him</option>
@@ -109,7 +118,10 @@ export function StepSetup({
         </div>
 
         <div>
-          <label htmlFor="obsSetting" className="block text-xs font-semibold text-slate-600 mb-1.5">
+          <label
+            htmlFor="obsSetting"
+            className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1.5"
+          >
             Class / Subject
           </label>
           <input
@@ -118,12 +130,15 @@ export function StepSetup({
             value={setup.setting}
             onChange={(e) => updateField('setting', e.target.value)}
             placeholder="e.g., math, ELA, social studies"
-            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/70 text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-colors"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50/70 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950 transition-colors"
           />
         </div>
 
         <div>
-          <label htmlFor="obsDate" className="block text-xs font-semibold text-slate-600 mb-1.5">
+          <label
+            htmlFor="obsDate"
+            className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-1.5"
+          >
             Observation Date
           </label>
           <input
@@ -131,18 +146,18 @@ export function StepSetup({
             type="date"
             value={setup.date}
             onChange={(e) => updateField('date', e.target.value)}
-            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/70 text-slate-900 text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-colors tabular-nums"
+            className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50/70 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950 transition-colors tabular-nums"
           />
         </div>
       </div>
 
-      <div className="mt-6 pt-6 border-t border-slate-100">
-        <label className="block text-xs font-semibold text-slate-600 mb-2">
+      <div className="mt-6 pt-6 border-t border-slate-100 dark:border-zinc-800">
+        <label className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-2">
           Interval Settings (Seconds per Interval &amp; Total Intervals)
         </label>
         <div className="grid grid-cols-2 gap-4 max-w-md">
           <div>
-            <label htmlFor="intSeconds" className="block text-xs text-slate-500 mb-1">
+            <label htmlFor="intSeconds" className="block text-xs text-slate-500 dark:text-zinc-400 mb-1">
               Seconds / Interval
             </label>
             <input
@@ -152,11 +167,11 @@ export function StepSetup({
               max={120}
               value={setup.intervalSeconds}
               onChange={(e) => updateField('intervalSeconds', Math.max(1, Number(e.target.value) || 15))}
-              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/70 text-slate-900 text-base font-mono tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
+              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50/70 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 text-base font-mono tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950"
             />
           </div>
           <div>
-            <label htmlFor="intTotal" className="block text-xs text-slate-500 mb-1">
+            <label htmlFor="intTotal" className="block text-xs text-slate-500 dark:text-zinc-400 mb-1">
               Total Intervals
             </label>
             <input
@@ -166,19 +181,19 @@ export function StepSetup({
               max={240}
               value={setup.totalIntervals}
               onChange={(e) => updateField('totalIntervals', Math.max(1, Number(e.target.value) || 60))}
-              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50/70 text-slate-900 text-base font-mono tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
+              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-zinc-700 bg-slate-50/70 dark:bg-zinc-900 text-slate-900 dark:text-zinc-100 text-base font-mono tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white dark:focus:bg-zinc-950"
             />
           </div>
         </div>
 
-        <div className="mt-3 flex items-center gap-2 text-sm font-medium text-blue-700 bg-blue-50/80 border border-blue-200/80 rounded-xl px-3.5 py-2.5 max-w-md tabular-nums">
+        <div className="mt-3 flex items-center gap-2 text-sm font-medium text-blue-700 dark:text-blue-300 bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-900 rounded-xl px-3.5 py-2.5 max-w-md tabular-nums">
           <Clock className="w-4 h-4 shrink-0" aria-hidden="true" />
           <span>Estimated Observation Length: {estimateText}</span>
         </div>
       </div>
 
-      <div className="mt-6 pt-6 border-t border-slate-100">
-        <span className="block text-xs font-semibold text-slate-600 mb-2.5">
+      <div className="mt-6 pt-6 border-t border-slate-100 dark:border-zinc-800">
+        <span className="block text-xs font-semibold text-slate-600 dark:text-zinc-400 mb-2.5">
           Data Collection Method
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Data Collection Method">
@@ -207,19 +222,25 @@ export function StepSetup({
                 onClick={() => updateField('inputMode', opt.id)}
                 className={`min-h-[64px] text-left p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
                   active
-                    ? 'border-blue-600 bg-blue-50/60 ring-1 ring-blue-600'
-                    : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
+                    ? 'border-blue-600 bg-blue-50/60 dark:bg-blue-950/50 ring-1 ring-blue-600'
+                    : 'border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 hover:border-slate-300 dark:hover:border-zinc-700 hover:bg-slate-50/60 dark:hover:bg-zinc-900'
                 }`}
               >
                 <Icon
-                  className={`w-5 h-5 mt-0.5 shrink-0 ${active ? 'text-blue-600' : 'text-slate-400'}`}
+                  className={`w-5 h-5 mt-0.5 shrink-0 ${active ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-zinc-500'}`}
                   aria-hidden="true"
                 />
                 <div>
-                  <div className={`text-sm font-semibold ${active ? 'text-blue-950' : 'text-slate-900'}`}>
+                  <div
+                    className={`text-sm font-semibold ${
+                      active ? 'text-blue-950 dark:text-blue-100' : 'text-slate-900 dark:text-zinc-100'
+                    }`}
+                  >
                     {opt.title}
                   </div>
-                  <div className="text-xs text-slate-500 mt-0.5 leading-relaxed">{opt.desc}</div>
+                  <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5 leading-relaxed">
+                    {opt.desc}
+                  </div>
                 </div>
               </button>
             );
