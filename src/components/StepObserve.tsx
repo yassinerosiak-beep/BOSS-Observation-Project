@@ -1,6 +1,8 @@
 import {
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  Flag,
   Lock,
   Pause,
   Play,
@@ -11,6 +13,7 @@ import {
   VolumeX,
   Zap,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import type {
   InputMode,
   LiveMarks,
@@ -32,6 +35,7 @@ interface StepObserveProps {
   classNarrative: string;
   liveCurr: number;
   liveSecs: number;
+  graceSecsLeft: number | null;
   liveRunning: boolean;
   muted: boolean;
   visualFlashEnabled: boolean;
@@ -49,6 +53,7 @@ interface StepObserveProps {
   onToggleMute: () => void;
   onToggleVisualFlash: () => void;
   onResetLive: () => void;
+  onFinishEarly: () => void;
   onToggleMark: (code: keyof LiveMarks) => void;
   onBack: () => void;
   onGenerate: () => void;
@@ -64,6 +69,7 @@ export function StepObserve({
   classNarrative,
   liveCurr,
   liveSecs,
+  graceSecsLeft,
   liveRunning,
   muted,
   visualFlashEnabled,
@@ -81,15 +87,35 @@ export function StepObserve({
   onToggleMute,
   onToggleVisualFlash,
   onResetLive,
+  onFinishEarly,
   onToggleMark,
   onBack,
   onGenerate,
 }: StepObserveProps) {
+  const [confirmAction, setConfirmAction] = useState<{
+    type: 'reset' | 'finishEarly';
+    step: 1 | 2;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!confirmAction) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setConfirmAction(null);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [confirmAction]);
+
   const displayStudent = setup.studentName.trim() || 'Target Student';
   const peer = isPeerInterval(liveCurr, peerCadence);
   const anyOffMarked = marks.M || marks.V || marks.P;
+  const hasAnySelection = marks.ON || anyOffMarked;
   const onTaskLocked = anyOffMarked;
   const offTaskLocked = marks.ON;
+  const isFrozenAtZero = graceSecsLeft !== null && liveSecs === 0;
+  const totalLogged = tallies.tTot + tallies.pTot;
 
   const updatePct = (key: keyof ManualPercentages, raw: string) => {
     const val = Math.max(0, Math.min(100, Number(raw) || 0));
@@ -326,10 +352,39 @@ export function StepObserve({
               </div>
             </div>
 
-            <div className="self-start sm:self-center bg-black/25 px-4 py-2.5 rounded-xl font-mono text-3xl sm:text-4xl font-extrabold tabular-nums tracking-tight">
-              00:{String(liveSecs).padStart(2, '0')}
+            <div
+              className={`self-start sm:self-center px-4 py-2.5 rounded-xl font-mono tabular-nums transition-colors ${
+                isFrozenAtZero
+                  ? 'bg-amber-400 text-slate-950 ring-2 ring-white shadow-sm'
+                  : 'bg-black/25 text-white'
+              }`}
+            >
+              <div className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                00:{String(liveSecs).padStart(2, '0')}
+              </div>
+              {isFrozenAtZero && (
+                <div className="text-xs font-sans font-bold mt-0.5 tracking-tight">
+                  0 seconds left · Freeze ({graceSecsLeft}s)
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Zero-Freeze Selection Prompt */}
+          {isFrozenAtZero && (
+            <div
+              role="status"
+              aria-live="polite"
+              className="mb-4 px-4 py-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700 text-amber-950 dark:text-amber-100 text-xs sm:text-sm font-semibold flex items-center justify-between gap-3"
+            >
+              <span>
+                0 seconds left — {hasAnySelection ? 'Selection recorded.' : 'no option selected yet. Tap ON-TASK or OFT-M/V/P now.'}
+              </span>
+              <span className="font-mono tabular-nums whitespace-nowrap shrink-0">
+                {graceSecsLeft}s
+              </span>
+            </div>
+          )}
 
           {/* Timer Controls */}
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2.5 mb-6">
@@ -408,11 +463,20 @@ export function StepObserve({
 
             <button
               type="button"
-              onClick={onResetLive}
+              onClick={() => setConfirmAction({ type: 'reset', step: 1 })}
               className="min-h-[46px] px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               <RotateCcw className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span>Reset</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setConfirmAction({ type: 'finishEarly', step: 1 })}
+              className="min-h-[46px] px-4 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/70 font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+            >
+              <Flag className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span>Finish Early</span>
             </button>
           </div>
 
@@ -554,6 +618,119 @@ export function StepObserve({
           <ArrowRight className="w-4 h-4 shrink-0" aria-hidden="true" />
         </button>
       </div>
+
+      {/* Double-Confirmation Modal for Reset & Finish Early */}
+      {confirmAction && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="confirm-action-title"
+          onClick={() => setConfirmAction(null)}
+        >
+          <div
+            className="w-full max-w-md bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3">
+              <div
+                className={`p-2.5 rounded-xl shrink-0 ${
+                  confirmAction.type === 'reset'
+                    ? 'bg-red-50 dark:bg-red-950/60 text-red-600 dark:text-red-400'
+                    : 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
+                }`}
+              >
+                {confirmAction.type === 'reset' ? (
+                  <AlertTriangle className="w-5 h-5" aria-hidden="true" />
+                ) : (
+                  <Flag className="w-5 h-5" aria-hidden="true" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+                  Confirmation {confirmAction.step} of 2
+                </p>
+                <h3
+                  id="confirm-action-title"
+                  className="mt-0.5 text-lg font-bold text-slate-900 dark:text-zinc-100"
+                >
+                  {confirmAction.type === 'reset'
+                    ? confirmAction.step === 1
+                      ? 'Reset Live Observation?'
+                      : 'Are you sure you want to reset?'
+                    : confirmAction.step === 1
+                      ? 'Finish Observation Early?'
+                      : 'Confirm Finish Early'}
+                </h3>
+                <p className="mt-2 text-sm text-slate-600 dark:text-zinc-400 leading-relaxed">
+                  {confirmAction.type === 'reset'
+                    ? confirmAction.step === 1
+                      ? `This will clear all ${totalLogged} logged interval(s) and reset the timer back to Interval 1.`
+                      : 'Final confirmation: all live tallies and interval history from this session will be permanently erased.'
+                    : confirmAction.step === 1
+                      ? `You have logged ${totalLogged} of ${setup.totalIntervals} intervals (${tallies.tTot} target, ${tallies.pTot} peer). Finishing early will stop the timer and move forward to the 6×3 Table & Report.`
+                      : 'Final confirmation: end the live timer now and generate your 6×3 Table & Report using the completed intervals?'}
+                </p>
+                {confirmAction.type === 'finishEarly' && confirmAction.step === 1 && hasAnySelection && (
+                  <p className="mt-2 text-xs font-medium text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/70 rounded-lg px-3 py-2">
+                    Interval {liveCurr} has an unlogged selection. Cancel and tap Log &amp; Next first if you want to include it.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setConfirmAction(null)}
+                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-sm font-semibold transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              {confirmAction.step === 1 ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setConfirmAction({ type: confirmAction.type, step: 2 })
+                  }
+                  className={`min-h-[44px] px-5 py-2.5 rounded-xl text-white text-sm font-semibold transition-colors cursor-pointer ${
+                    confirmAction.type === 'reset'
+                      ? 'bg-red-600 hover:bg-red-700'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  {confirmAction.type === 'reset'
+                    ? 'Yes, Reset (1/2)'
+                    : 'Continue (1/2)'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const actionType = confirmAction.type;
+                    setConfirmAction(null);
+                    if (actionType === 'reset') {
+                      onResetLive();
+                    } else {
+                      onFinishEarly();
+                    }
+                  }}
+                  className={`min-h-[44px] px-5 py-2.5 rounded-xl text-white text-sm font-semibold transition-colors cursor-pointer ${
+                    confirmAction.type === 'reset'
+                      ? 'bg-red-700 hover:bg-red-800'
+                      : 'bg-blue-700 hover:bg-blue-800'
+                  }`}
+                >
+                  {confirmAction.type === 'reset'
+                    ? 'Confirm Reset (2/2)'
+                    : 'Confirm Finish Early (2/2)'}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

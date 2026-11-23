@@ -109,6 +109,7 @@ export default function App() {
   // Live timer state
   const [liveCurr, setLiveCurr] = useState(1);
   const [liveSecs, setLiveSecs] = useState(() => loadOptions().defaultIntervalSeconds);
+  const [graceSecsLeft, setGraceSecsLeft] = useState<number | null>(null);
   const [liveRunning, setLiveRunning] = useState(false);
   const [muted, setMuted] = useState(() => !loadOptions().defaultSoundOn);
   const [visualFlashEnabled, setVisualFlashEnabled] = useState(
@@ -195,6 +196,8 @@ export default function App() {
 
   // Commit current interval marks into tallies and advance
   const commitAndAdvance = useCallback(() => {
+    setGraceSecsLeft(null);
+
     if (history.length >= setup.totalIntervals) {
       setLiveRunning(false);
       showToast(`All ${setup.totalIntervals} intervals are logged. Use Undo Previous or generate report.`);
@@ -291,33 +294,50 @@ export default function App() {
       };
     });
 
+    setGraceSecsLeft(null);
     setLiveCurr(last.intervalNumber);
     setLiveSecs(setup.intervalSeconds);
     setMarks({ ...last.marks });
     showToast(`Returned to Interval ${last.intervalNumber}.`);
   };
 
-  // Countdown tick effect
+  // Countdown tick effect (handles both interval timer and 4s zero-freeze grace period)
   useEffect(() => {
     if (!liveRunning) return;
     const id = window.setInterval(() => {
-      setLiveSecs((prev) => (prev <= 1 ? 0 : prev - 1));
+      if (graceSecsLeft !== null) {
+        setGraceSecsLeft((prev) => (prev === null ? null : prev <= 1 ? 0 : prev - 1));
+      } else {
+        setLiveSecs((prev) => (prev <= 1 ? 0 : prev - 1));
+      }
     }, 1000);
     return () => window.clearInterval(id);
-  }, [liveRunning]);
+  }, [liveRunning, graceSecsLeft]);
 
-  // Trigger commit when countdown reaches 0 while running
+  // Trigger 4-second freeze at 0 seconds left if no option is selected; otherwise commit & advance
   useEffect(() => {
-    if (liveRunning && liveSecs === 0) {
+    if (!liveRunning) return;
+
+    if (graceSecsLeft === 0) {
       commitAndAdvance();
+      return;
     }
-  }, [liveRunning, liveSecs, commitAndAdvance]);
+
+    if (liveSecs === 0 && graceSecsLeft === null) {
+      const hasSelection = marks.ON || marks.M || marks.V || marks.P;
+      if (!hasSelection) {
+        setGraceSecsLeft(4);
+      } else {
+        commitAndAdvance();
+      }
+    }
+  }, [liveRunning, liveSecs, graceSecsLeft, marks, commitAndAdvance]);
 
   const handleToggleTimer = () => {
     if (liveRunning) {
       setLiveRunning(false);
     } else {
-      if (tallies.tTot === 0 && tallies.pTot === 0 && liveCurr === 1) {
+      if (tallies.tTot === 0 && tallies.pTot === 0 && liveCurr === 1 && graceSecsLeft === null) {
         setLiveSecs(setup.intervalSeconds);
       }
       playCueTone(isPeerInterval(liveCurr, options.peerCadence) ? 1046 : 880, 0.1, muted);
@@ -328,6 +348,7 @@ export default function App() {
 
   const handleResetLive = () => {
     setLiveRunning(false);
+    setGraceSecsLeft(null);
     setLiveCurr(1);
     setLiveSecs(setup.intervalSeconds);
     setFlashPulseKey(0);
@@ -379,8 +400,16 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleFinishEarly = () => {
+    setLiveRunning(false);
+    setGraceSecsLeft(null);
+    navigateToStep(3);
+    showToast('Observation finished early — 6×3 Table & Report generated.');
+  };
+
   const handleStartNewObservation = (mode?: InputMode, student?: StudentProfile) => {
     setLiveRunning(false);
+    setGraceSecsLeft(null);
     setLiveCurr(1);
     setLiveSecs(options.defaultIntervalSeconds);
     setMuted(!options.defaultSoundOn);
@@ -702,6 +731,7 @@ export default function App() {
                 classNarrative={classNarrative}
                 liveCurr={liveCurr}
                 liveSecs={liveSecs}
+                graceSecsLeft={graceSecsLeft}
                 liveRunning={liveRunning}
                 muted={muted}
                 visualFlashEnabled={visualFlashEnabled}
@@ -719,6 +749,7 @@ export default function App() {
                 onToggleMute={() => setMuted((m) => !m)}
                 onToggleVisualFlash={() => setVisualFlashEnabled((f) => !f)}
                 onResetLive={handleResetLive}
+                onFinishEarly={handleFinishEarly}
                 onToggleMark={handleToggleMark}
                 onBack={() => navigateToStep(1)}
                 onGenerate={() => navigateToStep(3)}
