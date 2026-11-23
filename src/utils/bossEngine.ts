@@ -25,6 +25,7 @@ export const DEFAULT_OPTIONS: AppOptions = {
   peerCadence: 5,
   defaultInputMode: 'manual',
   defaultSoundOn: true,
+  defaultVisualFlash: true,
   keepScreenAwake: true,
 };
 

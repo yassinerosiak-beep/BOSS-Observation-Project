@@ -143,7 +143,7 @@ export function OptionsView({
           {formatDurationEstimate(options.defaultIntervalSeconds, options.defaultTotalIntervals)}
         </div>
 
-        <div className="mt-6 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="mt-6 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer">
             <input
               type="checkbox"
@@ -152,9 +152,24 @@ export function OptionsView({
               className="mt-1 w-4 h-4 accent-blue-600"
             />
             <div>
-              <div className="text-sm font-semibold text-slate-900">Audio Chimes Enabled by Default</div>
+              <div className="text-sm font-semibold text-slate-900">Audio Chimes Enabled</div>
               <div className="text-xs text-slate-500 mt-0.5">
-                Plays distinct soft tones for Target vs. Peer intervals (earbuds recommended).
+                Plays soft tones for Target vs. Peer intervals (earbuds recommended).
+              </div>
+            </div>
+          </label>
+
+          <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={options.defaultVisualFlash}
+              onChange={(e) => update('defaultVisualFlash', e.target.checked)}
+              className="mt-1 w-4 h-4 accent-blue-600"
+            />
+            <div>
+              <div className="text-sm font-semibold text-slate-900">Visual Interval Flash</div>
+              <div className="text-xs text-slate-500 mt-0.5">
+                Briefly flashes the live screen at every interval switch for silent cues.
               </div>
             </div>
           </label>
@@ -167,9 +182,9 @@ export function OptionsView({
               className="mt-1 w-4 h-4 accent-blue-600"
             />
             <div>
-              <div className="text-sm font-semibold text-slate-900">Keep Screen Awake (iPhone / iPad)</div>
+              <div className="text-sm font-semibold text-slate-900">Keep Screen Awake</div>
               <div className="text-xs text-slate-500 mt-0.5">
-                Requests browser Screen Wake Lock while the live timer is running.
+                Requests browser Screen Wake Lock while the live timer runs on iPhone/iPad.
               </div>
             </div>
           </label>

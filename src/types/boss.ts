@@ -24,7 +24,14 @@ export interface AppOptions {
   peerCadence: number;
   defaultInputMode: InputMode;
   defaultSoundOn: boolean;
+  defaultVisualFlash: boolean;
   keepScreenAwake: boolean;
+}
+
+export interface IntervalHistoryEntry {
+  intervalNumber: number;
+  wasPeer: boolean;
+  marks: LiveMarks;
 }
 
 export interface ObservationSetup {

@@ -6,8 +6,10 @@ import {
   Play,
   RotateCcw,
   SkipForward,
+  Undo2,
   Volume2,
   VolumeX,
+  Zap,
 } from 'lucide-react';
 import type {
   InputMode,
@@ -32,6 +34,9 @@ interface StepObserveProps {
   liveSecs: number;
   liveRunning: boolean;
   muted: boolean;
+  visualFlashEnabled: boolean;
+  flashPulseKey: number;
+  canUndo: boolean;
   marks: LiveMarks;
   tallies: LiveTallies;
   onManualTypeChange: (type: ManualInputType) => void;
@@ -40,7 +45,9 @@ interface StepObserveProps {
   onNarrativeChange: (text: string) => void;
   onToggleTimer: () => void;
   onLogAndNext: () => void;
+  onUndoPrevious: () => void;
   onToggleMute: () => void;
+  onToggleVisualFlash: () => void;
   onResetLive: () => void;
   onToggleMark: (code: keyof LiveMarks) => void;
   onBack: () => void;
@@ -59,6 +66,9 @@ export function StepObserve({
   liveSecs,
   liveRunning,
   muted,
+  visualFlashEnabled,
+  flashPulseKey,
+  canUndo,
   marks,
   tallies,
   onManualTypeChange,
@@ -67,7 +77,9 @@ export function StepObserve({
   onNarrativeChange,
   onToggleTimer,
   onLogAndNext,
+  onUndoPrevious,
   onToggleMute,
+  onToggleVisualFlash,
   onResetLive,
   onToggleMark,
   onBack,
@@ -261,7 +273,20 @@ export function StepObserve({
           )}
         </div>
       ) : (
-        <div>
+        <div className="relative">
+          {/* Silent Visual Interval Flash Pulse */}
+          {visualFlashEnabled && flashPulseKey > 0 && (
+            <div
+              key={flashPulseKey}
+              aria-hidden="true"
+              className={`pointer-events-none fixed inset-0 z-40 animate-interval-flash ${
+                peer
+                  ? 'bg-fuchsia-500/35 ring-8 ring-inset ring-red-500'
+                  : 'bg-emerald-400/35 ring-8 ring-inset ring-emerald-500'
+              }`}
+            />
+          )}
+
           {/* High-Visibility Target vs Peer Banner */}
           <div
             className={`rounded-2xl p-5 sm:p-6 text-white mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-md transition-all ${
@@ -293,7 +318,7 @@ export function StepObserve({
             <button
               type="button"
               onClick={onToggleTimer}
-              className="min-h-[46px] px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0 sm:flex-1"
+              className="col-span-2 sm:col-span-1 min-h-[46px] px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0 sm:flex-1"
             >
               {liveRunning ? (
                 <>
@@ -319,6 +344,16 @@ export function StepObserve({
 
             <button
               type="button"
+              disabled={!canUndo}
+              onClick={onUndoPrevious}
+              className="min-h-[46px] px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed text-amber-900 border border-amber-200/80 disabled:border-slate-200 font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+            >
+              <Undo2 className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span>Undo Previous</span>
+            </button>
+
+            <button
+              type="button"
               onClick={onToggleMute}
               className="min-h-[46px] px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
@@ -333,6 +368,20 @@ export function StepObserve({
                   <span>Sound: ON</span>
                 </>
               )}
+            </button>
+
+            <button
+              type="button"
+              onClick={onToggleVisualFlash}
+              aria-pressed={visualFlashEnabled}
+              className={`min-h-[46px] px-4 py-2.5 rounded-xl font-semibold text-sm inline-flex items-center justify-center gap-2 transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                visualFlashEnabled
+                  ? 'bg-slate-900 hover:bg-slate-800 text-white'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+              }`}
+            >
+              <Zap className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span>Flash: {visualFlashEnabled ? 'ON' : 'OFF'}</span>
             </button>
 
             <button

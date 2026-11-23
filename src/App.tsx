@@ -11,6 +11,7 @@ import type {
   AppView,
   BossResult,
   InputMode,
+  IntervalHistoryEntry,
   LiveMarks,
   LiveTallies,
   ManualCounts,
@@ -110,8 +111,13 @@ export default function App() {
   const [liveSecs, setLiveSecs] = useState(() => loadOptions().defaultIntervalSeconds);
   const [liveRunning, setLiveRunning] = useState(false);
   const [muted, setMuted] = useState(() => !loadOptions().defaultSoundOn);
+  const [visualFlashEnabled, setVisualFlashEnabled] = useState(
+    () => loadOptions().defaultVisualFlash
+  );
+  const [flashPulseKey, setFlashPulseKey] = useState(0);
   const [marks, setMarks] = useState<LiveMarks>(EMPTY_MARKS);
   const [tallies, setTallies] = useState<LiveTallies>(EMPTY_TALLIES);
+  const [history, setHistory] = useState<IntervalHistoryEntry[]>([]);
 
   // Computed result + report fills + review sort
   const [result, setResult] = useState<BossResult>(() =>
@@ -176,22 +182,40 @@ export default function App() {
     };
   }, [view, step, setup.inputMode, liveRunning, options.keepScreenAwake]);
 
+  const triggerFlash = useCallback(() => {
+    if (visualFlashEnabled) {
+      setFlashPulseKey((k) => k + 1);
+    }
+  }, [visualFlashEnabled]);
+
   // Commit current interval marks into tallies and advance
   const commitAndAdvance = useCallback(() => {
-    setTallies((prev) => {
-      const peer = isPeerInterval(liveCurr, options.peerCadence);
-      const onTask = marks.ON;
-      const anyOff = marks.M || marks.V || marks.P;
+    if (history.length >= setup.totalIntervals) {
+      setLiveRunning(false);
+      showToast(`All ${setup.totalIntervals} intervals are logged. Use Undo Previous or generate report.`);
+      return;
+    }
 
+    const peer = isPeerInterval(liveCurr, options.peerCadence);
+    const snapshotMarks: LiveMarks = { ...marks };
+    const onTask = snapshotMarks.ON;
+    const anyOff = snapshotMarks.M || snapshotMarks.V || snapshotMarks.P;
+
+    setHistory((prev) => [
+      ...prev,
+      { intervalNumber: liveCurr, wasPeer: peer, marks: snapshotMarks },
+    ]);
+
+    setTallies((prev) => {
       if (peer) {
         return {
           ...prev,
           pTot: prev.pTot + 1,
           pOn: prev.pOn + (onTask ? 1 : 0),
           pAnyOff: prev.pAnyOff + (anyOff ? 1 : 0),
-          pM: prev.pM + (marks.M ? 1 : 0),
-          pV: prev.pV + (marks.V ? 1 : 0),
-          pP: prev.pP + (marks.P ? 1 : 0),
+          pM: prev.pM + (snapshotMarks.M ? 1 : 0),
+          pV: prev.pV + (snapshotMarks.V ? 1 : 0),
+          pP: prev.pP + (snapshotMarks.P ? 1 : 0),
         };
       }
       return {
@@ -199,9 +223,9 @@ export default function App() {
         tTot: prev.tTot + 1,
         tOn: prev.tOn + (onTask ? 1 : 0),
         tAnyOff: prev.tAnyOff + (anyOff ? 1 : 0),
-        tM: prev.tM + (marks.M ? 1 : 0),
-        tV: prev.tV + (marks.V ? 1 : 0),
-        tP: prev.tP + (marks.P ? 1 : 0),
+        tM: prev.tM + (snapshotMarks.M ? 1 : 0),
+        tV: prev.tV + (snapshotMarks.V ? 1 : 0),
+        tP: prev.tP + (snapshotMarks.P ? 1 : 0),
       };
     });
 
@@ -210,6 +234,7 @@ export default function App() {
     if (liveCurr >= setup.totalIntervals) {
       setLiveRunning(false);
       playCueTone(660, 0.32, muted);
+      triggerFlash();
       showToast('Observation intervals complete. Click Generate 6×3 Table & Report.');
       return;
     }
@@ -218,7 +243,54 @@ export default function App() {
     setLiveCurr(nextInterval);
     setLiveSecs(setup.intervalSeconds);
     playCueTone(isPeerInterval(nextInterval, options.peerCadence) ? 1046 : 880, 0.12, muted);
-  }, [liveCurr, marks, muted, options.peerCadence, setup.intervalSeconds, setup.totalIntervals, showToast]);
+    triggerFlash();
+  }, [
+    history.length,
+    liveCurr,
+    marks,
+    muted,
+    options.peerCadence,
+    setup.intervalSeconds,
+    setup.totalIntervals,
+    showToast,
+    triggerFlash,
+  ]);
+
+  const handleUndoPrevious = () => {
+    if (history.length === 0) return;
+    const last = history[history.length - 1];
+    const onTask = last.marks.ON;
+    const anyOff = last.marks.M || last.marks.V || last.marks.P;
+
+    setHistory((prev) => prev.slice(0, -1));
+    setTallies((prev) => {
+      if (last.wasPeer) {
+        return {
+          ...prev,
+          pTot: Math.max(0, prev.pTot - 1),
+          pOn: Math.max(0, prev.pOn - (onTask ? 1 : 0)),
+          pAnyOff: Math.max(0, prev.pAnyOff - (anyOff ? 1 : 0)),
+          pM: Math.max(0, prev.pM - (last.marks.M ? 1 : 0)),
+          pV: Math.max(0, prev.pV - (last.marks.V ? 1 : 0)),
+          pP: Math.max(0, prev.pP - (last.marks.P ? 1 : 0)),
+        };
+      }
+      return {
+        ...prev,
+        tTot: Math.max(0, prev.tTot - 1),
+        tOn: Math.max(0, prev.tOn - (onTask ? 1 : 0)),
+        tAnyOff: Math.max(0, prev.tAnyOff - (anyOff ? 1 : 0)),
+        tM: Math.max(0, prev.tM - (last.marks.M ? 1 : 0)),
+        tV: Math.max(0, prev.tV - (last.marks.V ? 1 : 0)),
+        tP: Math.max(0, prev.tP - (last.marks.P ? 1 : 0)),
+      };
+    });
+
+    setLiveCurr(last.intervalNumber);
+    setLiveSecs(setup.intervalSeconds);
+    setMarks({ ...last.marks });
+    showToast(`Returned to Interval ${last.intervalNumber}.`);
+  };
 
   // Countdown tick effect
   useEffect(() => {
@@ -244,6 +316,7 @@ export default function App() {
         setLiveSecs(setup.intervalSeconds);
       }
       playCueTone(isPeerInterval(liveCurr, options.peerCadence) ? 1046 : 880, 0.1, muted);
+      triggerFlash();
       setLiveRunning(true);
     }
   };
@@ -252,8 +325,10 @@ export default function App() {
     setLiveRunning(false);
     setLiveCurr(1);
     setLiveSecs(setup.intervalSeconds);
+    setFlashPulseKey(0);
     setMarks(EMPTY_MARKS);
     setTallies(EMPTY_TALLIES);
+    setHistory([]);
     showToast('Live observation session reset.');
   };
 
@@ -304,8 +379,11 @@ export default function App() {
     setLiveCurr(1);
     setLiveSecs(options.defaultIntervalSeconds);
     setMuted(!options.defaultSoundOn);
+    setVisualFlashEnabled(options.defaultVisualFlash);
+    setFlashPulseKey(0);
     setMarks(EMPTY_MARKS);
     setTallies(EMPTY_TALLIES);
+    setHistory([]);
     setClassNarrative('');
     setFills({ format: '', motor: '', verbal: '' });
 
@@ -398,6 +476,7 @@ export default function App() {
     setOptions(next);
     saveOptionsToStorage(next);
     setMuted(!next.defaultSoundOn);
+    setVisualFlashEnabled(next.defaultVisualFlash);
   };
 
   const handleClearObservations = () => {
@@ -613,6 +692,9 @@ export default function App() {
                 liveSecs={liveSecs}
                 liveRunning={liveRunning}
                 muted={muted}
+                visualFlashEnabled={visualFlashEnabled}
+                flashPulseKey={flashPulseKey}
+                canUndo={history.length > 0}
                 marks={marks}
                 tallies={tallies}
                 onManualTypeChange={setManualType}
@@ -621,7 +703,9 @@ export default function App() {
                 onNarrativeChange={setClassNarrative}
                 onToggleTimer={handleToggleTimer}
                 onLogAndNext={commitAndAdvance}
+                onUndoPrevious={handleUndoPrevious}
                 onToggleMute={() => setMuted((m) => !m)}
+                onToggleVisualFlash={() => setVisualFlashEnabled((f) => !f)}
                 onResetLive={handleResetLive}
                 onToggleMark={handleToggleMark}
                 onBack={() => navigateToStep(1)}
